@@ -12,11 +12,6 @@ import {
 
 const ethUtil = require('ethereumjs-util');
 
-async function enfranchise(actor, amount, user) {
-  await ham.contracts.ham.methods.transfer(actor, amount.toString()).send({from: user});
-  await ham.contracts.ham.methods.delegate(actor).send({from: actor});
-}
-
 export const ham = new Ham(
   "http://localhost:8545/",
   // "http://127.0.0.1:9545/",
@@ -32,6 +27,12 @@ export const ham = new Ham(
     ethereumNodeTimeout: 10000
   }
 )
+
+async function enfranchise(actor, amount, user) {
+  await ham.contracts.ham.methods.transfer(actor, amount.toString()).send({from: user});
+  await ham.contracts.ham.methods.delegate(actor).send({from: actor});
+}
+
 const oneEther = 10 ** 18;
 
 const EIP712 = require('./EIP712');
