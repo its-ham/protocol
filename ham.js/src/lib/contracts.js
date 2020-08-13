@@ -3,29 +3,29 @@ import Web3 from 'web3';
 import * as Types from "./types.js";
 import { SUBTRACT_GAS_LIMIT, addressMap } from './constants.js';
 
-import ERC20Json from '../clean_build/contracts/IERC20.json';
-import HAMJson from '../clean_build/contracts/HAMDelegator.json';
-import HAMRebaserJson from '../clean_build/contracts/HAMRebaser.json';
-import HAMReservesJson from '../clean_build/contracts/HAMReserves.json';
-import HAMGovJson from '../clean_build/contracts/GovernorAlpha.json';
-import HAMTimelockJson from '../clean_build/contracts/Timelock.json';
+import ERC20Json from '../../../build/contracts/IERC20.json';
+import HAMJson from '../../../build/contracts/HAMDelegator.json';
+import HAMRebaserJson from '../../../build/contracts/HAMRebaser.json';
+import HAMReservesJson from '../../../build/contracts/HAMReserves.json';
+import HAMGovJson from '../../../build/contracts/GovernorAlpha.json';
+import HAMTimelockJson from '../../../build/contracts/Timelock.json';
 import WETHJson from './weth.json';
 import SNXJson from './snx.json';
 import UNIFactJson from './unifact2.json';
 import UNIPairJson from './uni2.json';
 import UNIRouterJson from './uniR.json';
 
-import WETHPoolJson from '../clean_build/contracts/HAMETHPool.json';
-import AMPLPoolJson from '../clean_build/contracts/HAMAMPLPool.json';
-import YFIPoolJson from '../clean_build/contracts/HAMYFIPool.json';
+import WETHPoolJson from '../../../build/contracts/HAMETHPool.json';
+import AMPLPoolJson from '../../../build/contracts/HAMAMPLPool.json';
+import YFIPoolJson from '../../../build/contracts/HAMYFIPool.json';
 
-import MKRPoolJson from '../clean_build/contracts/HAMMKRPool.json';
-import LENDPoolJson from '../clean_build/contracts/HAMLENDPool.json';
-import COMPPoolJson from '../clean_build/contracts/HAMCOMPPool.json';
-import SNXPoolJson from '../clean_build/contracts/HAMSNXPool.json';
-import LINKPoolJson from '../clean_build/contracts/HAMLINKPool.json';
+import MKRPoolJson from '../../../build/contracts/HAMMKRPool.json';
+import LENDPoolJson from '../../../build/contracts/HAMLENDPool.json';
+import COMPPoolJson from '../../../build/contracts/HAMCOMPPool.json';
+import SNXPoolJson from '../../../build/contracts/HAMSNXPool.json';
+import LINKPoolJson from '../../../build/contracts/HAMLINKPool.json';
 
-import IncJson from '../clean_build/contracts/HAMIncentivizer.json';
+import IncJson from '../../../build/contracts/HAMIncentivizer.json';
 
 export class Contracts {
   constructor(
