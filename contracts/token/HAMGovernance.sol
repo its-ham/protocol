@@ -13,8 +13,8 @@ contract HAMGovernanceToken is HAMTokenInterface {
     event DelegateVotesChanged(address indexed delegate, uint previousBalance, uint newBalance);
 
     /**
-     * @notice Delegate votes from `msg.sender` to `delegatee`
-     * @param delegator The address to get delegatee for
+     * @notice Get the delegate for a delegator address
+     * @param delegator The address to get delegates for
      */
     function delegates(address delegator)
         external

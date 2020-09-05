@@ -2,28 +2,31 @@ import BigNumber from 'bignumber.js/bignumber';
 import { INTEGERS } from './constants.js';
 
 
-export function stringToDecimal(s) {
+export function stringToDecimal(s: string) : BigNumber {
   return new BigNumber(s).div(INTEGERS.INTEREST_RATE_BASE);
 }
 
-export function decimalToString(d) {
+export function decimalToString(d: BigNumber | number | string) : string {
   return new BigNumber(d).times(INTEGERS.INTEREST_RATE_BASE).toFixed(0);
 }
 
-export function toString(input) {
+export function toString(input: string | number | BigNumber) : string {
   return new BigNumber(input).toFixed(0);
 }
 
-export function integerToValue(i) {
+interface SignedValue {
+  value: string,
+  sign: boolean
+}
+
+export function integerToValue(i: BigNumber) {
   return {
     sign: i.isGreaterThan(0),
-    value: i.abs().toFixed(0),
+    value: i.abs().toFixed(0) as string,
   };
 }
 
-export function valueToInteger(
-  { value, sign },
-) {
+export function valueToInteger({ value, sign } : SignedValue) : BigNumber {
   let result = new BigNumber(value);
   if (!result.isZero() && !sign) {
     result = result.times(-1);
@@ -31,9 +34,7 @@ export function valueToInteger(
   return result;
 }
 
-export function coefficientsToString(
-  coefficients,
-) {
+export function coefficientsToString(coefficients : BigNumber[]) {
   let m = new BigNumber(1);
   let result = new BigNumber(0);
   for (let i = 0; i < coefficients.length; i += 1) {
@@ -43,15 +44,19 @@ export function coefficientsToString(
   return result.toFixed(0);
 }
 
-export function toNumber(input) {
+export function bigNumber(input: string | number) : BigNumber {
+  return new BigNumber(input);
+}
+
+export function toNumber(input: string | number | BigNumber) {
   return new BigNumber(input).toNumber();
 }
 
 
 function partial(
-  target,
-  numerator,
-  denominator,
+  target : BigNumber,
+  numerator : BigNumber,
+  denominator : BigNumber,
 ){
   return target.times(numerator).div(denominator).integerValue(BigNumber.ROUND_DOWN);
 }

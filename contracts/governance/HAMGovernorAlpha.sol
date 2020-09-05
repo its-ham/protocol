@@ -24,6 +24,7 @@ pragma experimental ABIEncoderV2;
 
 
 import "../lib/SafeMath.sol";
+import "@nomiclabs/buidler/console.sol";
 
 contract GovernorAlpha {
     /// @notice The name of this contract
@@ -345,14 +346,8 @@ contract GovernorAlpha {
         return _castVote(msg.sender, proposalId, support);
     }
 
-    function castVoteBySig(
-        uint256 proposalId,
-        bool support,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    )
-        public
+    function voteDigest(uint256 proposalId, bool support)
+        public view returns (bytes32)
     {
         bytes32 domainSeparator = keccak256(
             abi.encode(
@@ -371,15 +366,27 @@ contract GovernorAlpha {
             )
         );
 
-        bytes32 digest = keccak256(
+        return keccak256(
             abi.encodePacked(
                 "\x19\x01",
                 domainSeparator,
                 structHash
             )
         );
+    }
 
+    function castVoteBySig(
+        uint256 proposalId,
+        bool support,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    )
+        public
+    {
+        bytes32 digest = voteDigest(proposalId, support);
         address signatory = ecrecover(digest, v, r, s);
+        console.log("SIGNATORY!", signatory);
         require(signatory != address(0), "GovernorAlpha::castVoteBySig: invalid signature");
         return _castVote(signatory, proposalId, support);
     }

@@ -1,9 +1,22 @@
-import * as Types from './types.js';
+import * as Types from './types';
+
+import {
+  Contracts
+} from './contracts';
 
 export class Account {
+  status: string;
+  contracts: Contracts;
+  accountInfo: string;
+  type: string;
+  allocation: number[];
+  balances: { [key: string]: number };
+  approvals: { [key: string]: number };
+  walletInfo: { [key: string]: string };
+
   constructor(
-    contracts,
-    address
+    contracts: Contracts,
+    address: string
   ) {
     this.contracts = contracts;
     this.accountInfo = address;
