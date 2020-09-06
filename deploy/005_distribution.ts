@@ -20,14 +20,94 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   console.log(bre.network.name);
 
   if (bre.network.name != "test") {
-    const ethPool = await deploy("HAMETHPool", {from: deployer, args:[], log:true});
-    const amplPool = await deploy("HAMAMPLPool", {from: deployer, args:[], log:true});
-    const yfiPool = await deploy("HAMYFIPool", {from: deployer, args:[], log:true});
-    const linkPool = await deploy("HAMLINKPool", {from: deployer, args:[], log:true});
-    const mkrPool = await deploy("HAMMKRPool", {from: deployer, args:[], log:true});
-    const lendPool = await deploy("HAMLENDPool", {from: deployer, args:[], log:true});
-    const compPool = await deploy("HAMCOMPPool", {from: deployer, args:[], log:true});
-    const snxPool = await deploy("HAMSNXPool", {from: deployer, args:[], log:true});
+    const ethPool = await deploy("HAMETHPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
+    const amplPool = await deploy("HAMAMPLPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0xc5be99A02C6857f9Eac67BbCE58DF5572498F40c", // AMP-ETH-UNI-LP
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
+    const yfiPool = await deploy("HAMYFIPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e", // YFI
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
+    const linkPool = await deploy("HAMLINKPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0x514910771AF9Ca656af840dff83E8264EcF986CA", // LINK
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
+    const mkrPool = await deploy("HAMMKRPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2", // MKR
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
+    const lendPool = await deploy("HAMLENDPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0x80fB784B7eD66730e8b1DBd9820aFD29931aab03", // LEND
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
+    const compPool = await deploy("HAMCOMPPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0xc00e94Cb662C3520282E6f5717214004A7f26888", // COMP
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
+    const snxPool = await deploy("HAMSNXPool", {
+      from: deployer,
+      contract: "Farm",
+      args:[
+        ham.address,
+        "0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F", // SNX
+        1597172400, // 2020-08-11 19:00:00 (UTC UTC +00:00)
+        625000, // ~7 1/4 days
+      ],
+      log:true
+    });
     const incentivizer = await deploy("HAMIncentivizer", {from: deployer, args:[], log:true});
 
     console.log("setting distributor");

@@ -596,16 +596,18 @@ interface HAM {
     function hamsScalingFactor() external returns (uint256);
 }
 
-
-
 contract LPTokenWrapper {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    IERC20 public comp = IERC20(0xc00e94Cb662C3520282E6f5717214004A7f26888);
+    IERC20 public wrappedToken;
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
+
+    constructor(IERC20 _wrappedToken) public {
+        wrappedToken = _wrappedToken;
+    }
 
     function totalSupply() public view returns (uint256) {
         return _totalSupply;
@@ -618,21 +620,21 @@ contract LPTokenWrapper {
     function stake(uint256 amount) public {
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
-        comp.safeTransferFrom(msg.sender, address(this), amount);
+        wrappedToken.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function withdraw(uint256 amount) public {
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
-        comp.safeTransfer(msg.sender, amount);
+        wrappedToken.safeTransfer(msg.sender, amount);
     }
 }
 
-contract HAMCOMPPool is LPTokenWrapper, IRewardDistributionRecipient {
-    IERC20 public ham = IERC20(0x0e2298E3B3390e3b945a5456fBf59eCc3f55DA16);
-    uint256 public constant DURATION = 625000; // ~7 1/4 days
+contract Farm is LPTokenWrapper, IRewardDistributionRecipient {
+    IERC20 public ham;
+    uint256 public duration;
+    uint256 public startTime;
 
-    uint256 public starttime = 1597172400; // 2020-08-11 19:00:00 (UTC UTC +00:00)
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
     uint256 public lastUpdateTime;
@@ -645,8 +647,19 @@ contract HAMCOMPPool is LPTokenWrapper, IRewardDistributionRecipient {
     event Withdrawn(address indexed user, uint256 amount);
     event RewardPaid(address indexed user, uint256 reward);
 
+    constructor(
+        IERC20 _ham,
+        IERC20 _wrappedToken,
+        uint256 _startTime,
+        uint256 _duration
+    ) LPTokenWrapper(_wrappedToken) public {
+        ham = _ham;
+        startTime = _startTime;
+        duration = _duration;
+    }
+
     modifier checkStart() {
-        require(block.timestamp >= starttime,"not start");
+        require(block.timestamp >= startTime,"not start");
         _;
     }
 
@@ -720,21 +733,21 @@ contract HAMCOMPPool is LPTokenWrapper, IRewardDistributionRecipient {
         onlyRewardDistribution
         updateReward(address(0))
     {
-        if (block.timestamp > starttime) {
+        if (block.timestamp > startTime) {
           if (block.timestamp >= periodFinish) {
-              rewardRate = reward.div(DURATION);
+              rewardRate = reward.div(duration);
           } else {
               uint256 remaining = periodFinish.sub(block.timestamp);
               uint256 leftover = remaining.mul(rewardRate);
-              rewardRate = reward.add(leftover).div(DURATION);
+              rewardRate = reward.add(leftover).div(duration);
           }
           lastUpdateTime = block.timestamp;
-          periodFinish = block.timestamp.add(DURATION);
+          periodFinish = block.timestamp.add(duration);
           emit RewardAdded(reward);
         } else {
-          rewardRate = reward.div(DURATION);
-          lastUpdateTime = starttime;
-          periodFinish = starttime.add(DURATION);
+          rewardRate = reward.div(duration);
+          lastUpdateTime = startTime;
+          periodFinish = startTime.add(duration);
           emit RewardAdded(reward);
         }
     }
