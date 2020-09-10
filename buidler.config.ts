@@ -23,6 +23,7 @@ task(
   [
     "@uniswap/v2-core/build/UniswapV2Factory.json",
     "@uniswap/v2-periphery/build/UniswapV2Router02.json",
+    "@uniswap/v2-periphery/build/WETH9.json",
     "@uniswap/v2-core/build/UniswapV2Pair.json"
   ].forEach((s) =>
     fs.copyFile(

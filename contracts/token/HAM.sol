@@ -265,7 +265,7 @@ contract HAMToken is HAMGovernanceToken {
     }
 
     /** @notice sets the incentivizer
-     * @param incentivizer_ The address of the rebaser contract to use for authentication.
+     * @param incentivizer_ The address of the incentivizer contract to use for authentication.
      */
     function _setIncentivizer(address incentivizer_)
         external

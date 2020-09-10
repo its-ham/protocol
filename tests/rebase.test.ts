@@ -76,8 +76,8 @@ describe("rebase_tests", () => {
   describe("rebase", () => {
     it("user has ycrv", async () => {
       let bal0 = await ycrv.balanceOf(user.address);
-      expect(bal0).to.be.eq("2000000000000000000000000");
-      });
+      expect(bal0).to.be.eq(BigNumber.from("2000000000000000000000000"));
+    });
 
     it("create pair", async () => {
       await uniswapFactory.createPair(
