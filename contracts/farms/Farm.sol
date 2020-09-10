@@ -598,8 +598,8 @@ contract LPTokenWrapper {
 
     IERC20 public wrappedToken;
 
-    uint256 private _totalSupply;
-    mapping(address => uint256) private _balances;
+    uint256 public _totalSupply;
+    mapping(address => uint256) public _balances;
 
     constructor(IERC20 _wrappedToken) public {
         wrappedToken = _wrappedToken;
@@ -714,7 +714,9 @@ contract Farm is LPTokenWrapper, IRewardDistributionRecipient {
     }
 
     function exit() external {
-        withdraw(balanceOf(msg.sender));
+        if (balanceOf(msg.sender) > 0) {
+            withdraw(balanceOf(msg.sender));
+        }
         getReward();
     }
 

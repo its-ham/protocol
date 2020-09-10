@@ -35,11 +35,7 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
       log:true
     });
 
-    const weth = await deploy("WETH", {
-      contract: "WETH9",
-      from: deployer,
-      log:true
-    });
+    const weth = await deployments.get("WETH");
 
     const wethAmplPair = await read("UniswapV2Factory",
       { from: deployer }, "getPair", weth.address, ampl.address);
