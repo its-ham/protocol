@@ -337,7 +337,7 @@ contract HAMToken is HAMGovernanceToken {
             }
         }
 
-        totalSupply = initSupply.mul(hamsScalingFactor);
+        totalSupply = initSupply.mul(hamsScalingFactor).div(BASE);
         emit Rebase(epoch, prevHamsScalingFactor, hamsScalingFactor);
         return totalSupply;
     }
