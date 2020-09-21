@@ -15,10 +15,8 @@ contract Trough is Farm {
         IERC20 _ham,
         IERC20 _wrappedToken,
         uint256 _rewardMultiplier,
-        uint256 _rewardDivisor,
-        uint256 _startTime,
-        uint256 _duration
-    ) Farm(_ham, _wrappedToken, _startTime, _duration) public {
+        uint256 _rewardDivisor
+    ) Farm(_ham, _wrappedToken) public {
         rewardMultiplier = _rewardMultiplier;
         rewardDivisor = _rewardDivisor;
     }

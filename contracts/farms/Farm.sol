@@ -650,16 +650,19 @@ contract Farm is LPTokenWrapper, IRewardDistributionRecipient {
 
     constructor(
         IERC20 _ham,
-        IERC20 _wrappedToken,
-        uint256 _startTime,
-        uint256 _duration
+        IERC20 _wrappedToken
     ) LPTokenWrapper(_wrappedToken) public {
         ham = _ham;
+    }
+
+    function initialize(uint256 _startTime, uint256 _duration) public onlyOwner {
+        require(startTime == 0, "already initialized");
         startTime = _startTime;
         duration = _duration;
     }
 
     modifier checkStart() {
+        require(startTime > 0,"not initialized");
         require(block.timestamp >= startTime,"not start");
         _;
     }

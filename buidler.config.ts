@@ -7,6 +7,7 @@ import { TypeChain } from "typechain/dist/TypeChain";
 
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("buidler-deploy");
+usePlugin('buidler-contract-sizer');
 
 task(
   "typechain",
@@ -69,5 +70,9 @@ export default {
     tests: "./tests",
     deploy: "./deploy/",
     deployments: "./deployments",
+  },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: false,
   },
 };

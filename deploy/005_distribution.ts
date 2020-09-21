@@ -19,8 +19,30 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   const uniswapRouter = await deployments.get("UniswapV2Router");
 
   const oneEth = BigNumber.from(10).pow(18);
+  const twoFifty = BigNumber.from(10).pow(3).mul(BigNumber.from(10).pow(18)).mul(250);
+  const oneFive = twoFifty.mul(6);
+
+  const transferOwnership = (contract : string, newAddress : string) => {
+    return execute(contract,
+      { from: deployer, gasLimit: 100000},
+      "transferOwnership",
+      newAddress
+    )
+  };
 
   console.log(bre.network.name);
+
+  const farmRegistry = await deploy("FarmRegistry", {
+    from: deployer,
+    args:[
+      ham.address,
+      distributor
+    ],
+    log: true,
+  });
+
+  await execute("HAM", { from: deployer }, "transfer", farmRegistry.address, BigNumber.from("2000000000000000000000000"));
+  await execute("HAM", { from: deployer }, "setFarmRegistry", farmRegistry.address);
 
   if (bre.network.name == "buidlerevm") {
 
@@ -37,120 +59,85 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
 
     const weth = await deployments.get("WETH");
 
+    const wethFarm = await deploy("WethFarm", {
+      from: deployer,
+      contract: "Farm",
+      args: [ham.address, weth.address],
+      log: true
+    });
+
+    await execute("WethFarm",
+      { from: deployer },
+      "transferOwnership",
+      farmRegistry.address
+    );
+    await execute("FarmRegistry",
+      { from: deployer },
+      "addNewFarm",
+      wethFarm.address,
+      twoFifty,
+      1601510400, // 2020-10-01 00:00:00 (UTC +00:00)
+      625000, // ~7 1/4 days
+    );
+
     const wethAmplPair = await read("UniswapV2Factory",
       { from: deployer }, "getPair", weth.address, ampl.address);
 
-    const ethPool = await deploy("HAMETHPool", {
+    const wethAmplFarm = await deploy("WethAmplFarm", {
       from: deployer,
       contract: "Farm",
-      args:[
-        ham.address,
-        weth.address,
-        1601510400, // 2020-10-01 00:00:00 (UTC +00:00)
-        625000, // ~7 1/4 days
-      ],
-      log:true
+      args: [ham.address, wethAmplPair as string],
+      log: true
     });
 
-    const amplPool = await deploy("HAMAMPLPool", {
-      from: deployer,
-      contract: "Farm",
-      args:[
-        ham.address,
-        wethAmplPair as string,
-        1601510400, // 2020-10-01 00:00:00 (UTC +00:00)
-        625000, // ~7 1/4 days
-      ],
-      log:true
-      });
+    await execute("WethAmplFarm",
+      { from: deployer },
+      "transferOwnership",
+      farmRegistry.address
+    );
+    await execute("FarmRegistry",
+      { from: deployer },
+      "addNewFarm",
+      wethAmplFarm.address,
+      twoFifty,
+      1601510400, // 2020-10-01 00:00:00 (UTC +00:00)
+      625000, // ~7 1/4 days
+    );
 
     const incentivizer = await deploy("HAMIncentivizer", {
       from: deployer,
-      args:[
-        ham.address,
-        1601510400, // 2020-10-01 00:00:00 (UTC +00:00)
-        625000, // ~7 1/4 days
-      ],
+      args:[ ham.address ],
       log:true
     });
+    await execute("HAMIncentivizer",
+      { from: deployer },
+      "initialize",
+      1601510400, // 2020-10-01 00:00:00 (UTC +00:00)
+      625000, // ~7 1/4 days
+    );
 
     console.log("setting distributor");
 
-    await Promise.all([
-      execute("HAMETHPool",
-        { from: deployer }, "setRewardDistribution", distributor),
-      execute("HAMAMPLPool",
-        { from: deployer }, "setRewardDistribution", distributor),
-      execute("HAMIncentivizer",
-        { from: deployer }, "setRewardDistribution", distributor),
-    ]);
-
-    const twoFifty = BigNumber.from(10).pow(3).mul(BigNumber.from(10).pow(18)).mul(250);
-    const oneFive = twoFifty.mul(6);
+    await execute("HAMIncentivizer", { from: deployer }, "setRewardDistribution", distributor);
 
     console.log("transfering and notifying");
     console.log("eth");
 
-    await Promise.all([
-      execute('HAM',
-        { from: deployer }, "transfer", ethPool.address, twoFifty),
-      execute('HAM',
-        { from: deployer }, "transfer", amplPool.address, twoFifty),
-      execute('HAM',
-        { from: deployer }, "_setIncentivizer", incentivizer.address),
-    ]);
+    await execute('HAM',
+        { from: deployer }, "_setIncentivizer", incentivizer.address);
+
+    await execute('HAMIncentivizer',
+        { from: distributor, gasLimit: 500000}, "notifyRewardAmount", "0");
+
+    await execute('HAMIncentivizer',
+      { from: deployer, gasLimit: 100000},
+      "setRewardDistribution",
+      timelock.address
+    );
 
     await Promise.all([
-      execute('HAMETHPool',
-        { from: distributor }, "notifyRewardAmount", twoFifty),
-      execute('HAMAMPLPool',
-        { from: distributor }, "notifyRewardAmount", twoFifty),
-      execute('HAMIncentivizer',
-        { from: distributor, gasLimit: 500000}, "notifyRewardAmount", "0"),
-    ]);
-
-    await Promise.all([
-      execute('HAMETHPool',
-        { from: deployer, gasLimit: 100000},
-        "setRewardDistribution",
-        timelock.address
-      ),
-      execute('HAMAMPLPool',
-        { from: deployer, gasLimit: 100000},
-        "setRewardDistribution",
-        timelock.address
-      ),
-      execute('HAMIncentivizer',
-        { from: deployer, gasLimit: 100000},
-        "setRewardDistribution",
-        timelock.address
-      ),
-    ]);
-
-    const transferOwnership = (contract : string) => {
-      return execute(contract,
-        { from: deployer, gasLimit: 100000},
-        "transferOwnership",
-        timelock.address
-      )
-    };
-
-    await Promise.all([
-      execute('HAMETHPool',
-        { from: deployer, gasLimit: 100000},
-        "transferOwnership",
-        timelock.address
-      ),
-      execute('HAMAMPLPool',
-        { from: deployer, gasLimit: 100000},
-        "transferOwnership",
-        timelock.address
-      ),
-      execute('HAMIncentivizer',
-        { from: deployer, gasLimit: 100000},
-        "transferOwnership",
-        timelock.address
-      )
+      transferOwnership('FarmRegistry', timelock.address),
+      transferOwnership('HAMIncentivizer', timelock.address),
     ]);
   }
 

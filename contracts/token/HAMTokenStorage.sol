@@ -73,4 +73,5 @@ contract HAMTokenStorage {
 
     uint256 public initSupply;
 
+    address public farmRegistry;
 }

@@ -8,8 +8,6 @@ Ham is an experimental protocol building upon the most exciting innovations in p
 * how quickly can a community bootstrap itself?
 * wen moon?
 
-Built by a team of DeFi natives, it seeks to create:
-
 At its core, HAM is an elastic supply cryptocurrency, which expands and contracts its supply in response to market conditions, initially targeting 4.20 USD per HAM. This stability mechanism includes one key addition to existing elastic supply models such as Ampleforth: a portion of each supply expansion is used to buy assets and add them to the Ham treasury, which is controlled via Ham community governance.
 
 We have built Ham to be a minimally viable monetary experiment, and at launch there will be zero value in the HAM token. After deployment, it is entirely dependent upon HAM holders to determine its value and future development. We have employed a fork of the Compound governance module, which will ensure all updates to the Ham protocol happen entirely on-chain through community voting.
@@ -64,37 +62,18 @@ Governance is entirely dictated by HAM holders from the start. Upon deployment, 
 
 ### Building
 
-This repo uses truffle. Ensure that you have truffle installed. Given the composability aspect of this
+This repo uses Buidler, Typechain, and Waffle.
 
-Then, to build the contracts run:
-```
-$ truffle compile
+To build the contracts run
+
+```sh
+npm run build
 ```
 
-To run tests, run against a single test package, i.e.:
-```
-$ sh startBlockchain.sh
-$ truffle migrate --network distribution
-$ python scripts/clean.py
-$ cd jsLib
-$ jest deployment
-$ jest token
-$ jest rebase
-$ jest governance
-$ jest governorAlpha
-$ jest distribution
-```
-The need to run one-by-one seems to be a limitation of jest + ganache.
+Run tests with
 
-The distribution tests require specific tokens. These are acquired by using the ganache unlock_account function. If you receive fails, the owner likely decreased their ownership of that token. Just replace any instances of that address with another holder of the token.
-
-Note: some governance tests require a different ganache setup. You will encounter a warning (but not a failed test) if the wrong type of ganache is setup. To run the correct one:
-```
-$ sh startBlockchainMining.sh
-$ truffle migrate --network distribution
-$ python scripts/clean.py
-$ cd jsLib
-$ jest governance
+```sh
+npm run test
 ```
 
 #### Attributions

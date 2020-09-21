@@ -15,6 +15,8 @@ import DamJSON from "../build/contracts/Dam.json";
 import { Dam } from "../build/typechain/Dam";
 import TroughJSON from "../build/contracts/Trough.json";
 import { Trough } from "../build/typechain/Trough";
+import FarmJSON from "../build/contracts/Farm.json";
+import { Farm } from "../build/typechain/Farm";
 import { UniswapV2Factory } from "../build/typechain/UniswapV2Factory";
 import { UniswapV2FactoryFactory } from "../build/typechain/UniswapV2FactoryFactory";
 import { UniswapV2Pair } from "../build/typechain/UniswapV2Pair";
@@ -63,6 +65,32 @@ describe("farms", () => {
     uniswapFactory = UniswapV2FactoryFactory.connect((await deployments.get("UniswapV2Factory")).address, user);
   });
 
+
+  describe("basic farms", () => {
+    let farm : Farm;
+
+    beforeEach(async () => {
+      farm = (await deployContract(
+        user,
+        FarmJSON,
+        [ham.address, weth.address],
+      )) as Farm;
+    });
+
+    it("requires initialization to stake", async () => {
+      await expect(farm.stake(100)).to.be.revertedWith("not initialized");
+    });
+
+    it("can't be initialized twice", async () => {
+      await farm.initialize(1, 2);
+      await expect(farm.initialize(1, 3)).to.be.revertedWith("already initialized");
+    });
+
+    it("can only be initialized by the owener", async () => {
+      await expect(farm.connect(a1).initialize(1, 2)).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+  });
+
   describe("compost heaps", () => {
     let heap : CompostHeap;
 
@@ -70,8 +98,9 @@ describe("farms", () => {
       heap = (await deployContract(
         user,
         CompostHeapJSON,
-        [ham.address, [ycrv.address], weth.address, uniswapRouter.address, nowInSeconds() + 60 * 10, 625000],
+        [ham.address, [ycrv.address], weth.address, uniswapRouter.address],
       )) as CompostHeap;
+      await heap.initialize(nowInSeconds() + 60 * 10, 625000);
       await ham.transfer(heap.address, oneEth.mul(10000));
     });
 
@@ -152,8 +181,9 @@ describe("farms", () => {
       trough = (await deployContract(
         user,
         TroughJSON,
-        [ham.address, ycrv.address, 2, 1, nowInSeconds() + 60 * 10, 625000],
+        [ham.address, ycrv.address, 2, 1],
       )) as Trough;
+      await trough.initialize(nowInSeconds() + 60 * 10, 625000);
       await ham.transfer(trough.address, oneEth.mul(10000));
     });
     it("reverts before start", async () => {
@@ -205,8 +235,9 @@ describe("farms", () => {
       dam = (await deployContract(
         user,
         DamJSON,
-        [ham.address, [pairAddress], uniswapRouter.address, nowInSeconds() + 60 * 10, 625000],
+        [ham.address, [pairAddress], uniswapRouter.address],
       )) as Dam;
+      await dam.initialize(nowInSeconds() + 60 * 10, 625000);
       await ham.transfer(dam.address, oneEth.mul(10000));
     });
 

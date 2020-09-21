@@ -4,10 +4,8 @@ contract HAMIncentivizer is Farm {
     uint256 public initReward = 15 * 10**5 * 10**18; // 1.5m
 
     constructor(
-        IERC20 _ham,
-        uint256 _startTime,
-        uint256 _duration
-    ) Farm(_ham, IERC20(address(0)), _startTime, _duration) public {}
+        IERC20 _ham
+    ) Farm(_ham, IERC20(address(0))) public {}
 
     function getReward() public checkHalve {
         super.getReward();
@@ -24,11 +22,6 @@ contract HAMIncentivizer is Farm {
             periodFinish = block.timestamp.add(duration);
             emit RewardAdded(initReward);
         }
-        _;
-    }
-
-    modifier checkStart(){
-        require(block.timestamp >= startTime,"not start");
         _;
     }
 

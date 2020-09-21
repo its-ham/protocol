@@ -19,10 +19,8 @@ contract Dam is Farm {
     constructor(
         IERC20 _ham,
         IUniswapV2Pair[] memory _acceptedPairs,
-        IUniswapV2Router02 _uniswapRouter,
-        uint256 _startTime,
-        uint256 _duration
-    ) Farm(_ham, IERC20(address(0)), _startTime, _duration) public {
+        IUniswapV2Router02 _uniswapRouter
+    ) Farm(_ham, IERC20(address(0))) public {
         uniswapRouter = _uniswapRouter;
         wrappedToken = IERC20(_uniswapRouter.WETH());
         for (uint i = 0; i<_acceptedPairs.length; i++) {

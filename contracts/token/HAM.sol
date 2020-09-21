@@ -1,6 +1,5 @@
 pragma solidity 0.5.17;
 
-/* import "./HAMTokenInterface.sol"; */
 import "./HAMGovernance.sol";
 
 contract HAMToken is HAMGovernanceToken {
@@ -354,7 +353,7 @@ contract HAM is HAMToken {
         string memory name_,
         string memory symbol_,
         uint8 decimals_,
-        address initial_owner,
+        address initialOwner,
         uint256 initSupply_
     )
         public
@@ -366,10 +365,11 @@ contract HAM is HAMToken {
         initSupply = initSupply_.mul(10**24/ (BASE));
         totalSupply = initSupply_;
         hamsScalingFactor = BASE;
-        _hamBalances[initial_owner] = initSupply_.mul(10**24 / (BASE));
+        _hamBalances[initialOwner] = initSupply_.mul(10**24 / (BASE));
+        farmRegistry = address(0);
+    }
 
-        // owner renounces ownership after deployment as they need to set
-        // rebaser and incentivizer
-        // gov = gov_;
+    function setFarmRegistry(address registry) external onlyGov {
+        farmRegistry = registry;
     }
 }

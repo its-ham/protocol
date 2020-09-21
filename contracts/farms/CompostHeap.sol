@@ -17,10 +17,8 @@ contract CompostHeap is Farm {
         IERC20 _ham,
         IERC20[] memory _acceptedTokens,
         IERC20 _tokenToBuy,
-        IUniswapV2Router02 _uniswapRouter,
-        uint256 _startTime,
-        uint256 _duration
-    ) Farm(_ham, _tokenToBuy, _startTime, _duration) public {
+        IUniswapV2Router02 _uniswapRouter
+    ) Farm(_ham, _tokenToBuy) public {
         uniswapRouter = _uniswapRouter;
         for (uint i = 0; i<_acceptedTokens.length; i++) {
             acceptedTokens[address(_acceptedTokens[i])] = true;

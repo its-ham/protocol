@@ -329,6 +329,11 @@ contract HAMDelegator is HAMTokenInterface, HAMDelegatorInterface {
         delegateToViewAndReturn();
     }
 
+    function setFarmRegistry(address registry) external {
+        registry;
+        delegateAndReturn();
+    }
+
     /**
      * @notice Internal method to delegate execution to another contract
      * @dev It returns to the external caller whatever the implementation returns or forwards reverts
