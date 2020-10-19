@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
-  Switch,
+  Redirect,
   Route,
+  Switch,
   NavLink
 } from 'react-router-dom';
 import Color from 'color';
 import useEventListener from '@use-it/event-listener';
 
 import CountdownHeader from './components/CountdownHeader';
+import Manifesto from './components/Manifesto';
 import Farms from './components/Farms';
 import pig from './images/pig.svg';
 import deadPig from './images/pig-dead.svg';
@@ -39,7 +41,7 @@ function Nav() {
         <NavLink to="/farming">Farming</NavLink>
       </li>
       <li>
-        <NavLink to="/about">About</NavLink>
+        <NavLink to="/manifesto">Manifesto</NavLink>
       </li>
     </ul>
     <WalletArea />
@@ -50,7 +52,7 @@ function Home() {
   if (launchDay.getTime() > Date.now() && prod) {
     return <CountdownHeader /> ;
   }
-  return <div>Let's do this</div>;
+  return <Redirect to="/manifesto" />;
 }
 
 function App() {
@@ -72,6 +74,9 @@ function App() {
         <Switch>
           <Route path="/farming">
             <Farms degeneracy={degen}/>
+          </Route>
+          <Route path="/manifesto">
+            <Manifesto />
           </Route>
           <Route path="/">
             <Home />

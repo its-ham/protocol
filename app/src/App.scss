@@ -1,5 +1,18 @@
 @import './colors.scss';
 
+h1 {
+    font-size: 3em;
+}
+
+h1, h2 {
+    color: darken($farmBrown, 10%);
+}
+
+p, ol {
+  font-size: 1.5em;
+  color: rgba($farmBrown, 0.65);
+}
+
 .App {
   text-align: center;
   background-color: $lightBackground;
@@ -54,14 +67,6 @@ header nav {
 }
 
 main > section > header {
-    h1 {
-        font-size: 3em;
-        color: darken($farmBrown, 10%);
-    }
 
-    p {
-        font-size: 1.5em;
-        // color: lighten($farmBrown, 10%);
-        color: rgba($farmBrown, 0.65);
-    }
+
 }

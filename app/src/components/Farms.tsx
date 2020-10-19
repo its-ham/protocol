@@ -41,9 +41,9 @@ function ZoomedFarm(props : FarmProps) {
       <img src={imageSrc} alt="farm" />
       { (title || subtitle) &&
         <div className="sidebar">
-          { props.title && <h2>{props.title}</h2> }
-          { props.subtitle && <h3>{props.subtitle}</h3> }
-          { props.children }
+          { title && <h2>{props.title}</h2> }
+          { subtitle && <h3>{props.subtitle}</h3> }
+          { children }
         </div>
       }
     </div>

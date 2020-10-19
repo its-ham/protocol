@@ -28,9 +28,9 @@ Rather than allocating a portion of the supply to the founding team, HAM is bein
 
 The initial distribution of HAM will be oddly distributed across as many as 18 different staking pools. These pools have been chosen intentionally to reach a broad swath of the overall degenerate community, many of which [don't like sweet potatoes](https://github.com/gam-finance/yam-protocol).
 
-These pools will be deployed over a 4 to 6 week period.
+These pools will be deployed over a 4 to 8 week period.
 
-Following the launch of the initial distribution pools, a second distribution wave will be incentivized through a HAM Uniswap pool. This pool will allow Uniswap's TWAP-based oracle to provide necessary input as the basis for rebase calculations, as well as provide liquidity for the rebase to purchase assets for the treasury.
+Following the launch of the initial distribution pools, a second distribution wave will be incentivized through multiple HAM Uniswap pools as well as other mechanisms. These pools will allow Uniswap's TWAP-based oracle to provide necessary input as the basis for rebase calculations, as well as provide liquidity for the rebase to purchase assets for the treasury.
 
 ## Rebases
 
