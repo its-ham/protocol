@@ -1,26 +1,46 @@
 import "./Farm.sol";
 
-contract HAMIncentivizer is Farm {
-    uint256 public initReward = 15 * 10**5 * 10**18; // 1.5m
+contract Incentivizer is Farm {
+    uint256 public initSupplyReward;
+    address public minter;
 
     constructor(
-        IERC20 _ham
-    ) Farm(_ham, IERC20(address(0))) public {}
+        IERC20 _ham,
+        IERC20 _wrappedToken,
+        uint256 _initSupplyReward
+    ) Farm(_ham, _wrappedToken) public {
+        initSupplyReward = _initSupplyReward;
+    }
 
+    function initialize(address _minter, uint256 _startTime, uint256 _duration)
+        public onlyOwner
+    {
+        minter = _minter;
+        super.initialize(_startTime, _duration);
+    }
     function getReward() public checkHalve {
         super.getReward();
     }
 
+    function mintHAM(uint256 amount) internal {
+        address targetMinter;
+        if (minter != address(0)) {
+            targetMinter = minter;
+        } else {
+            targetMinter = address(ham);
+        }
+        HAM(targetMinter).mint(address(this), amount);
+    }
+
     modifier checkHalve() {
         if (block.timestamp >= periodFinish) {
-            initReward = initReward.mul(50).div(100);
+            initSupplyReward = initSupplyReward.mul(50).div(100);
             uint256 scalingFactor = HAM(address(ham)).hamsScalingFactor();
-            uint256 newRewards = initReward.mul(scalingFactor).div(10**18);
-            HAM(address(ham)).mint(address(this), newRewards);
-
-            rewardRate = initReward.div(duration);
+            uint256 newRewards = initSupplyReward.mul(scalingFactor).div(10**18);
+            mintHAM(newRewards);
+            rewardRate = initSupplyReward.div(duration);
             periodFinish = block.timestamp.add(duration);
-            emit RewardAdded(initReward);
+            emit RewardAdded(initSupplyReward);
         }
         _;
     }
@@ -33,16 +53,8 @@ contract HAMIncentivizer is Farm {
         super.notifyRewardAmount(reward);
         if (block.timestamp <= startTime) {
           require(ham.balanceOf(address(this)) == 0, "already initialized");
-          HAM(address(ham)).mint(address(this), initReward);
+          mintHAM(initSupplyReward);
         }
-    }
-
-    function setWrappedToken(IERC20 _wrappedToken) public {
-        // only gov
-        require(msg.sender == owner(), "!governance");
-        // can only be set to non-zero once
-        require(address(wrappedToken) == address(0), "already initialized");
-        wrappedToken = _wrappedToken;
     }
 
     // This function allows governance to take unsupported tokens out of the

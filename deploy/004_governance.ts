@@ -12,7 +12,17 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   const ham = await deployments.get("HAM");
 
   const lock = await deploy(
-    "Timelock", {
+    "GovernorTimelock", {
+      contract: "Timelock",
+      from: deployer,
+      args: [],
+      log: true
+    }
+  );
+
+  await deploy(
+    "HamburglarTimelock", {
+      contract: "Timelock",
       from: deployer,
       args: [],
       log: true
