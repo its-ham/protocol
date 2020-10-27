@@ -1,0 +1,67 @@
+@import './colors.scss';
+
+.App {
+  text-align: center;
+  background-color: $lightBackground;
+  min-height: 1200px;
+
+  & > * {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+button {
+    background-color: lighten($farmBrown, 10%);
+    border-radius: 10px;
+    border: none;
+    height: 3em;
+    color: $lightText;
+    margin: 0 0.5em;
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 2em;
+
+  a {
+    text-decoration: none;
+    color: rgba($farmBrown, 0.5);
+    font-size: 1.15em;
+    &.active {
+      color: $farmBrown;
+    }
+  }
+
+  ul {
+    justify-content: space-between;
+    & > li {
+      display: inline;
+      margin: 1em;
+    }
+  }
+
+  img.logo {
+    height: 50px;
+    width: 50px;
+  }
+
+  button {
+      max-height: 3em;
+  }
+}
+
+main > section > header {
+    h1 {
+        font-size: 3em;
+        color: darken($farmBrown, 10%);
+    }
+
+    p {
+        font-size: 1.5em;
+        // color: lighten($farmBrown, 10%);
+        color: rgba($farmBrown, 0.65);
+    }
+}
