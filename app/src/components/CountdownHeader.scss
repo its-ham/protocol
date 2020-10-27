@@ -25,7 +25,6 @@
 }
 
 .countdownHeader {
-  background-color: $lightBackground;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -42,6 +41,12 @@
     .countdownLogo {
       background-image: url("../images/pig-dead.svg");
     }
+  }
+}
+
+.dead .countdownHeader {
+  .countdownLogo {
+    background-image: url("../images/pig-dead.svg");
   }
 }
 

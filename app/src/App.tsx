@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import classNames from 'classnames';
 import {
   BrowserRouter as Router,
   Redirect,
@@ -16,7 +17,7 @@ import pig from './images/pig.svg';
 import deadPig from './images/pig-dead.svg';
 import './App.scss';
 
-const launchDay = new Date('October 30, 2020 00:00:00');
+const launchDay = new Date('October 31, 2020 00:00:00');
 const prod = process.env.NODE_ENV === "production";
 
 function WalletArea() {
@@ -31,9 +32,6 @@ function Logo() {
 }
 
 function Nav() {
-  if (launchDay.getTime() > Date.now() && prod) {
-    return <nav />;
-  }
   return <nav>
     <Logo />
     <ul>
@@ -48,29 +46,26 @@ function Nav() {
   </nav>;
 }
 
-function Home() {
-  if (launchDay.getTime() > Date.now() && prod) {
-    return <CountdownHeader /> ;
-  }
-  return <Redirect to="/manifesto" />;
-}
-
 function App() {
-  const [degen, setDegen] = useState(0);
+  const [degen, setDegen] = useState(0.0);
+  const [dead, setDead] = useState(false);
 
   useEventListener("scroll", (e) => {
     const maxScroll = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );
     setDegen(window.scrollY / maxScroll);
   });
 
+  const showApp = !(launchDay.getTime() > Date.now() && prod);
   const bg = Color('#fff7d6').mix(Color('#300c48'), degen * 1.4);
 
   return (
     <Router>
-      <main className="App" style={{ backgroundColor: bg.hex() }}>
-        <header>
-          <Nav />
-        </header>
+      <main className={classNames('App', { dead })} style={(!dead ? { backgroundColor: bg.hex() } : {})}>
+        { showApp &&
+          <header>
+            <Nav />
+          </header>
+        }
         <Switch>
           <Route path="/farming">
             <Farms degeneracy={degen}/>
@@ -79,7 +74,13 @@ function App() {
             <Manifesto />
           </Route>
           <Route path="/">
-            <Home />
+            { !showApp ?
+              <CountdownHeader
+                date={launchDay}
+                killPig={() => {
+                  setDead(true);
+                }}/> :
+              <Redirect to="/manifesto" /> }
           </Route>
         </Switch>
       </main>

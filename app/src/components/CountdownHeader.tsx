@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
-import classNames from 'classnames';
+import React from 'react';
 import Timer from 'react-compound-timer';
 import './CountdownHeader.scss';
 
-const launchDay = new Date('October 12, 2020 00:00:00');
+interface CountdownProps {
+  date: Date;
+  killPig: () => void;
+}
 
-function CountdownHeader() {
-  const [dead, setDead] = useState(false);
+function CountdownHeader(props : CountdownProps) {
+  const { date, killPig } = props;
   return (
-    <header className={classNames('countdownHeader', { dead })}
-            onClick={(e) => setDead(true)}>
+    <header className="countdownHeader"
+            onClick={(e) => killPig()}>
       <div className="countdownLogo"/>
       <p>
         <Timer
-          initialTime={launchDay.getTime() - (new Date()).getTime()}
+          initialTime={date.getTime() - (new Date()).getTime()}
           direction="backward"
           formatValue={(s) => s.toString().padStart(2, '0')}
         >

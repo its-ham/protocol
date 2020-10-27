@@ -13,10 +13,25 @@ p, ol {
   color: rgba($farmBrown, 0.65);
 }
 
+@keyframes dimming {
+  from {
+    background-color: $lightBackground;
+    color: $darkText;
+  }
+  to {
+    background-color: $darkBackground;
+    color: $lightText;
+  }
+}
+
 .App {
   text-align: center;
   background-color: $lightBackground;
-  min-height: 1200px;
+
+  &.dead {
+    background-color: $darkBackground;
+    animation: dimming 5s;
+  }
 
   & > * {
     max-width: 1200px;
