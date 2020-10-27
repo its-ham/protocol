@@ -2,15 +2,17 @@
 
 ## The Protocol
 
-Ham is an experimental protocol building upon the most exciting innovations in programmable money and governance. Built by a couple degenerates who prefer meat to [sweet potatoes](https://github.com/yam-finance/yam-protocol), it seeks to answer
+Ham is a financial MMORPG building upon some of the least dumb ideas in programmable money and governance. Built by a couple degenerates who prefer meat to [sweet potatoes](https://github.com/yam-finance/yam-protocol), it seeks to answer
 
 * how strong is a meme?
 * how quickly can a community bootstrap itself?
 * wen moon?
 
-At its core, HAM is an elastic supply cryptocurrency, which expands and contracts its supply in response to market conditions, initially targeting 4.20 USD per HAM. This stability mechanism includes one key addition to existing elastic supply models such as Ampleforth: a portion of each supply expansion is used to buy assets and add them to the Ham treasury, which is controlled via Ham community governance.
+Read the [manifesto](./MANIFESTO.md).
 
-We have built Ham to be a minimally viable monetary experiment, and at launch there will be zero value in the HAM token. After deployment, it is entirely dependent upon HAM holders to determine its value and future development. We have employed a fork of the Compound governance module, which will ensure all updates to the Ham protocol happen entirely on-chain through community voting.
+At its core, HAM is an elastic supply cryptocurrency, which expands and contracts its supply in response to market conditions, initially targeting 4.20 USD per HAM. This stability mechanism includes one key addition to existing elastic supply models such as Ampleforth: a portion of each supply expansion is used to buy assets and add them to the Ham treasury, which is controlled via Ham community governance, as well as incentivizing certain user behavior.
+
+At launch there will be zero value in the HAM token. After deployment and initial distribution, it is entirely dependent upon HAM holders to determine its value and future development. We have employed a fork of the Compound governance module, which will ensure all updates to the Ham protocol happen entirely on-chain through community voting.
 
 ## Audits
 
@@ -18,9 +20,11 @@ None. Seriously, look at the commit history, it's just find and replace. You pro
 
 The [original devs](github.com/yam-finance/yam-protocol) and the forking degenerates all encourage governance to fund a bug bounty/security audit. If there's no audit or bounty program, remember, any funds you deposit are basically a bug bounty.
 
+Perhaps Sam Sun will audit this thing. Apparently that's how you get an audit these days, you just mention auditors and YOLO.
+
 ## The Token
 
-The core HAM token maintains a reservey. During each supply expansion (referred to as an inflating rebase), a portion of tokens is minted and used to build up the treasury. This treasury is then in complete ownership of HAM holders via governance.
+The core HAM token maintains a reserve. During each supply expansion (referred to as an inflating rebase), a portion of tokens is minted and used to build up the treasury. This treasury is then in complete ownership of HAM holders via governance.
 
 ## Distribution
 
