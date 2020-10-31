@@ -272,6 +272,7 @@ contract HAMRebaser {
     */
     function init_twap()
         public
+        onlyGov
     {
         require(timeOfTWAPInit == 0, "already activated");
         (uint priceCumulative, uint32 blockTimestamp) =

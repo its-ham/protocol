@@ -15,7 +15,6 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   const reserves = await deployments.get("HAMReserves");
   const rebaser = await deployments.get("HAMRebaser");
   const gov = await deployments.get("GovernorAlpha");
-  const timelock = await deployments.get("GovernorTimelock");
   const uniswapRouter = await deployments.get("UniswapV2Router");
 
   const oneEth = BigNumber.from(10).pow(18);
@@ -32,6 +31,8 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
 
   console.log(bre.network.name);
 
+  console.log("deploying farm registry");
+
   const farmRegistry = await deploy("FarmRegistry", {
     from: deployer,
     args:[
@@ -41,8 +42,10 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
     log: true,
   });
 
-  await execute("HAM", { from: deployer }, "transfer", farmRegistry.address, BigNumber.from("2000000000000000000000000"));
+  await execute("HAM", { from: deployer }, "transfer", farmRegistry.address, oneEth.mul(2000000));
   await execute("HAM", { from: deployer }, "setFarmRegistry", farmRegistry.address);
+
+  console.log("deploying incentivizer registry");
 
   const incentivizerRegistry = await deploy("IncentivizerRegistry", {
     from: deployer,
@@ -52,7 +55,8 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
 
   await execute('HAM', { from: deployer }, "_setIncentivizer", incentivizerRegistry.address);
 
-  if (bre.network.name == "buidlerevm") {
+  if (bre.network.name !== "mainnet") {
+    console.log("deploying test farms");
 
     const ampl = await deploy("AMPL", {
       contract: "StubToken",
@@ -106,46 +110,6 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
       625000, // ~7 1/4 days
     );
   }
-
-  await Promise.all([
-    execute('HAM',
-      { from: deployer, gasLimit: 100000},
-      "_setPendingGov",
-      timelock.address
-    ),
-    execute('HAMReserves',
-      { from: deployer, gasLimit: 100000},
-      "_setPendingGov",
-      timelock.address
-    ),
-    execute('HAMRebaser',
-      { from: deployer, gasLimit: 100000},
-      "_setPendingGov",
-      timelock.address
-    ),
-  ]);
-
-  await Promise.all([
-    execute('GovernorTimelock',
-      { from: deployer },
-      "executeTransaction",
-      ham.address, 0, "_acceptGov()", "0x", 0
-    ),
-    execute('GovernorTimelock',
-      { from: deployer },
-      "executeTransaction",
-      reserves.address, 0, "_acceptGov()", "0x", 0
-    ),
-    execute('GovernorTimelock',
-      { from: deployer },
-      "executeTransaction",
-      rebaser.address, 0, "_acceptGov()", "0x", 0
-    ),
-  ]);
-
-  await execute('GovernorTimelock', { from: deployer }, "setPendingAdmin", gov.address);
-  await execute('GovernorAlpha', { from: deployer }, "__acceptAdmin");
-  await execute('GovernorAlpha', { from: deployer }, "__abdicate");
 };
 
 export default func;

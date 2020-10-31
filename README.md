@@ -30,11 +30,13 @@ The core HAM token maintains a reserve. During each supply expansion (referred t
 
 Rather than allocating a portion of the supply to the founding team, HAM is being distributed in the spirit of Satoshi, and applied by YFI: no premine, no founder shares, no VC interests — simply equal-opportunity staking distribution to attract a broad and vision-aligned community of meat eaters.
 
-The initial distribution of HAM will be oddly distributed across as many as 18 different staking pools. These pools have been chosen intentionally to reach a broad swath of the overall degenerate community, many of which [don't like sweet potatoes](https://github.com/gam-finance/yam-protocol).
+The initial distribution of HAM will be oddly distributed across as many as 20 different staking pools. These pools have been chosen intentionally to reach a broad swath of the overall degenerate community, many of which [don't like sweet potatoes](https://github.com/gam-finance/yam-protocol).
 
 These pools will be deployed over a 4 to 8 week period.
 
 Following the launch of the initial distribution pools, a second distribution wave will be incentivized through multiple HAM Uniswap pools as well as other mechanisms. These pools will allow Uniswap's TWAP-based oracle to provide necessary input as the basis for rebase calculations, as well as provide liquidity for the rebase to purchase assets for the treasury.
+
+After the launch of all pools, the initial rebase will be activated and governance will be turned over to token holders.
 
 ## Rebases
 
@@ -46,7 +48,9 @@ There are a few requirements before rebases are active:
 2. `init_twap()`
 3. `activate_rebasing()`
 
-Following the launch of the second pool, rebasing can begin its activation phase. This begins with `init_twap()` on the rebaser contract. Anyone can call this at anytime once there is a HAM Uniswap V2 market. The oracle is designed to be 12 hours between checkpoints. Given that, 12 hours after `init_twap()` is called, anyone can call `activate_rebasing()`. This turns rebasing on, permanently. Now anyone can call `rebase()` when `inRebaseWindow() == true;`.
+Following the launch of the second pool, the deployer can call `init_twap()` on the rebaser contract, and rebasing can begin its activation phase.
+
+The oracle is designed to be 12 hours between checkpoints. Given that, 12 hours after `init_twap()` is called, anyone can call `activate_rebasing()`. This turns rebasing on, permanently. Now anyone can call `rebase()` when `inRebaseWindow() == true;`.
 
 In a rebase, the order of operations are:
 
