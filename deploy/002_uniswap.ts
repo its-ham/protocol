@@ -18,7 +18,7 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   const ham = await deployments.get("HAM");
 
   if (bre.network.name !== "mainnet") {
-    console.log("Deploying Uniswap v2 factory, router, and stub tokens");
+    console.log("Deploying Uniswap v2 factory, router, WETH, and stub tokens");
 
     const weth = await deploy(
       "WETH",
@@ -30,7 +30,7 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
       { contract:UniswapV2FactoryArtifact, from: deployer, args: [constants.AddressZero], log: true}
     );
 
-    const uniswapV2Router = await deploy(
+    await deploy(
       "UniswapV2Router",
       {
         contract: UniswapV2RouterArtifact,
@@ -40,12 +40,12 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
       }
     );
 
-    const ycrvStub = await deploy(
-      "yCRV",
+    await deploy(
+      "DAI",
       {
         contract: "StubToken",
         from: deployer,
-        args:["yCRV", "yCRV", BigNumber.from("2000000000000000000000000")],
+        args:["DAI", "DAI", BigNumber.from("2000000000000000000000000")],
         log: true
       }
     );

@@ -49,7 +49,7 @@ describe("farms", () => {
 
   let ham: Ham;
   let ampl: StubToken;
-  let ycrv: StubToken;
+  let dai: StubToken;
   let uniswapRouter: UniswapV2Router02;
   let uniswapFactory: UniswapV2Factory;
   let weth: Weth9;
@@ -59,7 +59,7 @@ describe("farms", () => {
 
     ham = HamFactory.connect((await deployments.get("HAM")).address, user);
     ampl = StubTokenFactory.connect((await deployments.get("AMPL")).address, user);
-    ycrv = StubTokenFactory.connect((await deployments.get("yCRV")).address, user);
+    dai = StubTokenFactory.connect((await deployments.get("DAI")).address, user);
     weth = Weth9Factory.connect((await deployments.get("WETH")).address, user);
     uniswapRouter = UniswapV2Router02Factory.connect((await deployments.get("UniswapV2Router")).address, user);
     uniswapFactory = UniswapV2FactoryFactory.connect((await deployments.get("UniswapV2Factory")).address, user);
@@ -98,7 +98,7 @@ describe("farms", () => {
       heap = (await deployContract(
         user,
         CompostHeapJSON,
-        [ham.address, [ycrv.address], weth.address, uniswapRouter.address],
+        [ham.address, [dai.address], weth.address, uniswapRouter.address],
       )) as CompostHeap;
       await heap.initialize(nowInSeconds() + 60 * 10, 625000);
       await ham.transfer(heap.address, oneEth.mul(10000));
@@ -115,27 +115,27 @@ describe("farms", () => {
       await ampl.approve(heap.address, 1);
       await expect(heap.stakeAndSell(ampl.address, 1)).to.be.revertedWith("token not accepted");
 
-      await ycrv.approve(heap.address, 1);
-      await expect(heap.stakeAndSell(ycrv.address, 2)).to.be.reverted;
+      await dai.approve(heap.address, 1);
+      await expect(heap.stakeAndSell(dai.address, 2)).to.be.reverted;
 
-      await ycrv.approve(heap.address, "2000000000000000000000001");
-      await expect(heap.stakeAndSell(ycrv.address, "2000000000000000000000001")).to.be.reverted;
+      await dai.approve(heap.address, "2000000000000000000000001");
+      await expect(heap.stakeAndSell(dai.address, "2000000000000000000000001")).to.be.reverted;
     });
 
     it("shouldnt sell shit before start", async () => {
-      await ycrv.approve(heap.address, "2000");
-      await expect(heap.stakeAndSell(ycrv.address, "2000", { gasLimit: 30000 })).to.be.revertedWith("not start");
+      await dai.approve(heap.address, "2000");
+      await expect(heap.stakeAndSell(dai.address, "2000", { gasLimit: 30000 })).to.be.revertedWith("not start");
     });
     it("should sell shit after start", async () => {
       await increaseTime(provider, 60 * 10);
 
-      await uniswapFactory.createPair(ycrv.address, weth.address);
+      await uniswapFactory.createPair(dai.address, weth.address);
 
-      expect(await ycrv.balanceOf(user.address)).to.be.gt(oneEth.mul(1000));
+      expect(await dai.balanceOf(user.address)).to.be.gt(oneEth.mul(1000));
 
-      await ycrv.approve(uniswapRouter.address, oneEth.mul(1000));
+      await dai.approve(uniswapRouter.address, oneEth.mul(1000));
       await uniswapRouter.addLiquidityETH(
-        ycrv.address,
+        dai.address,
         oneEth.mul(100),
         oneEth.mul(100),
         oneEth,
@@ -144,15 +144,15 @@ describe("farms", () => {
         { value: oneEth }
       );
 
-      let pairAddress = await uniswapFactory.getPair(ycrv.address, weth.address);
+      let pairAddress = await uniswapFactory.getPair(dai.address, weth.address);
       let pair = UniswapV2PairFactory.connect(pairAddress, user);
       let reserves0 = await pair.getReserves();
 
-      await ycrv.approve(heap.address, "2000");
-      await heap.stakeAndSell(ycrv.address, "2000");
+      await dai.approve(heap.address, "2000");
+      await heap.stakeAndSell(dai.address, "2000");
 
       let reserves1 = await pair.getReserves();
-      if (ycrv.address == await pair.token0()) {
+      if (dai.address == await pair.token0()) {
         expect(reserves0[0]).to.be.lt(reserves1[0]);
         expect(reserves0[1]).to.be.gt(reserves1[1]);
         expect(await heap.balanceOf(user.address)).to.be.eq(reserves0[1].sub(reserves1[1]));
@@ -181,31 +181,31 @@ describe("farms", () => {
       trough = (await deployContract(
         user,
         TroughJSON,
-        [ham.address, ycrv.address, 2, 1],
+        [ham.address, dai.address, 2, 1],
       )) as Trough;
       await trough.initialize(nowInSeconds() + 60 * 10, 625000);
       await ham.transfer(trough.address, oneEth.mul(10000));
     });
     it("reverts before start", async () => {
-      await ycrv.approve(trough.address, 2000);
+      await dai.approve(trough.address, 2000);
       await expect(trough.stake(2000)).to.be.revertedWith("not start");
     });
     it("issue rewards when fed", async () => {
       await increaseTime(provider, 60 * 10);
-      await ycrv.approve(trough.address, 2000);
+      await dai.approve(trough.address, 2000);
       await trough.stake(2000);
       expect(await trough.earned(user.address)).to.be.eq(4000);
     });
     it("dont allow normal staking", async () => {
       await increaseTime(provider, 60 * 10);
-      await ycrv.approve(trough.address, 2000);
+      await dai.approve(trough.address, 2000);
       await trough.stake(2000);
       expect(await trough.balanceOf(user.address)).to.be.eq(0);
     });
     it("reward on exit", async () => {
       let balance0 = await ham.balanceOf(user.address);
       await increaseTime(provider, 60 * 10);
-      await ycrv.approve(trough.address, 2000);
+      await dai.approve(trough.address, 2000);
       await trough.stake(2000);
       await trough.exit({ gasLimit: 300000 });
       let balance1 = await ham.balanceOf(user.address);
@@ -218,9 +218,9 @@ describe("farms", () => {
     let pair : UniswapV2Pair;
 
     beforeEach(async () => {
-      await ycrv.approve(uniswapRouter.address, oneEth.mul(1000));
+      await dai.approve(uniswapRouter.address, oneEth.mul(1000));
       await uniswapRouter.addLiquidityETH(
-        ycrv.address,
+        dai.address,
         oneEth.mul(100),
         oneEth.mul(100),
         oneEth,
@@ -229,7 +229,7 @@ describe("farms", () => {
         { value: oneEth }
       );
 
-      let pairAddress = await uniswapFactory.getPair(ycrv.address, weth.address);
+      let pairAddress = await uniswapFactory.getPair(dai.address, weth.address);
       pair = UniswapV2PairFactory.connect(pairAddress, user);
 
       dam = (await deployContract(
@@ -261,12 +261,12 @@ describe("farms", () => {
     it("return all tokens at exit", async () => {
       await increaseTime(provider, 60 * 10);
       let reserves0 = await pair.getReserves();
-      let yBalance0 = await ycrv.balanceOf(user.address)
+      let yBalance0 = await dai.balanceOf(user.address)
       let lpBalance = await pair.balanceOf(user.address);
       await pair.approve(dam.address, lpBalance);
       await dam.stakeAndUnwrap(pair.address, lpBalance);
       await dam.exit();
-      let yBalance1 = await ycrv.balanceOf(user.address);
+      let yBalance1 = await dai.balanceOf(user.address);
       expect(yBalance1).to.be.gt(yBalance0);
     });
   });

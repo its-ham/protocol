@@ -11,7 +11,7 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
 
   const ham = await deployments.get("HAM");
 
-  const reserveToken = (await deployments.get("yCRV")).address;
+  const reserveToken = (await deployments.get("DAI")).address;
   const uniswapFactory = (await deployments.get("UniswapV2Factory")).address;
 
   const reserves = await deploy(

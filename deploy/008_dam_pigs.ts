@@ -25,19 +25,19 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   };
 
   // uniswapv2router02 on mainnet
-  let uniswapV2Router = bre.network.name === "mainnet" ? "0x7a250d5630b4cf539739df2c5dacb4c659f2488d": (await deployments.get("UniswapV2Router")).address;
+  let uniswapV2Router = (await deployments.get("UniswapV2Router")).address;
 
   const dam = await deploy("DamPigs", {
     contract: "Dam",
     from: deployer,
     args:[
       ham.address,
-      [
+      bre.network.name === "mainnet" ? [
         "0x3da1313ae46132a397d90d95b1424a9a7e3e0fce", // ETH/CRV
         "0x8bd1661da98ebdd3bd080f0be4e6d9be8ce9858c", // ETH/REN
         "0xb9b752f7f4a4680eeb327ffe728f46666763a796", // ETH/BZXR
         "0xe6f19dab7d43317344282f803f8e8d240708174a", // ETH/KEEP
-      ],
+      ] : [],
       uniswapV2Router
     ],
     log: true,

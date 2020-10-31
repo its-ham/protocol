@@ -47,7 +47,7 @@ describe("Distribution", () => {
   let rebaser : HamRebaser;
   let reserves : HamReserves;
   let incentivizer : HamIncentivizer;
-  let ycrv : StubToken;
+  let dai : StubToken;
   let uniswapFactory : UniswapV2Factory;
   let uniswapRouter : UniswapV2Router02;
   let weth : Weth9;
@@ -64,7 +64,7 @@ describe("Distribution", () => {
     let reservesDeployment = await deployments.get("HAMReserves");
     let uniFactDeployment = await deployments.get("UniswapV2Factory");
     let uniRouterDeployment = await deployments.get("UniswapV2Router");
-    let ycrvDeployment = await deployments.get("yCRV");
+    let daiDeployment = await deployments.get("DAI");
     let amplDeployment = await deployments.get("AMPL");
     let amplPoolDeployment = await deployments.get("HAMAMPLPool");
     let ethPoolDeployment = await deployments.get("HAMETHPool");
@@ -90,7 +90,7 @@ describe("Distribution", () => {
       incentivizer: HamIncentivizerFactory.connect(incentivizerDeployment.address, user),
       rebaser: HamRebaserFactory.connect(rebaserDeployment.address, user),
       reserves: HamReservesFactory.connect(reservesDeployment.address, user),
-      ycrv: StubTokenFactory.connect(ycrvDeployment.address, user),
+      dai: StubTokenFactory.connect(daiDeployment.address, user),
       uniswapFactory: UniswapV2FactoryFactory.connect(uniFactDeployment.address, user),
       uniswapRouter: UniswapV2Router02Factory.connect(uniRouterDeployment.address, user),
       weth,
@@ -106,7 +106,7 @@ describe("Distribution", () => {
        incentivizer,
        rebaser,
        reserves,
-       ycrv,
+       dai,
        uniswapFactory,
        uniswapRouter,
        weth,
@@ -246,21 +246,21 @@ describe("Distribution", () => {
           constants.MaxUint256.sub(1),
           { gasLimit: 80000 }
         );
-        //console.log("approve ycrv")
-        await ycrv.approve(
+        //console.log("approve dai")
+        await dai.approve(
           uniswapRouter.address,
           constants.MaxUint256.sub(1),
           { gasLimit: 80000 }
         );
 
-        let ycrv_bal = await ycrv.balanceOf(user.address)
+        let dai_bal = await dai.balanceOf(user.address)
 
-        console.log("ycrv_bal bal", ycrv_bal)
+        console.log("dai_bal bal", dai_bal)
 
         console.log("add liq/ create pool")
         await uniswapRouter.addLiquidity(
           ham.address,
-          ycrv.address,
+          dai.address,
           ham_bal,
           ham_bal,
           ham_bal,
@@ -272,7 +272,7 @@ describe("Distribution", () => {
 
         let pairAddress = await uniswapFactory.getPair(
           ham.address,
-          ycrv.address
+          dai.address
         );
         let pair = UniswapPairFactory.connect(pairAddress, user);
         let bal = await pair.balanceOf(user.address);
@@ -428,21 +428,21 @@ describe("Distribution", () => {
             constants.MaxUint256.sub(1),
             { gasLimit: 80000 }
           );
-          //console.log("approve ycrv")
-          await ycrv.approve(
+          //console.log("approve dai")
+          await dai.approve(
             uniswapRouter.address,
             constants.MaxUint256.sub(1),
             { gasLimit: 80000 }
           );
 
-          let ycrv_bal = await ycrv.balanceOf(user.address)
+          let dai_bal = await dai.balanceOf(user.address)
 
-          console.log("ycrv_bal bal", ycrv_bal)
+          console.log("dai_bal bal", dai_bal)
 
           console.log("add liq/ create pool")
           await uniswapRouter.addLiquidity(
             ham.address,
-            ycrv.address,
+            dai.address,
             ham_bal,
             ham_bal,
             ham_bal,
@@ -454,7 +454,7 @@ describe("Distribution", () => {
 
           let pairAddress = await uniswapFactory.getPair(
             ham.address,
-            ycrv.address
+            dai.address
           );
           let pair = UniswapPairFactory.connect(pairAddress, user);
           let bal = await pair.balanceOf(user.address);
@@ -465,7 +465,7 @@ describe("Distribution", () => {
             "100000000000000000000000",
             100000,
             [
-              ycrv.address,
+              dai.address,
               ham.address
             ],
             user.address,
@@ -479,7 +479,7 @@ describe("Distribution", () => {
             "10000000000000000",
             100000,
             [
-              ycrv.address,
+              dai.address,
               ham.address
             ],
             user.address,
@@ -499,7 +499,7 @@ describe("Distribution", () => {
             "1000000000000000000000",
             100000,
             [
-              ycrv.address,
+              dai.address,
               ham.address
             ],
             user.address,
@@ -519,7 +519,7 @@ describe("Distribution", () => {
             "10000000000000000000",
             100000,
             [
-              ycrv.address,
+              dai.address,
               ham.address
             ],
             user.address,
@@ -561,12 +561,12 @@ describe("Distribution", () => {
 
           let resHAM = await ham.balanceOf(reserves.address);
 
-          let resycrv = await ycrv.balanceOf(reserves.address);
+          let resdai = await dai.balanceOf(reserves.address);
 
           // new balance > old balance
           expect(bal).to.be.lte(bal1);
           // increases reserves
-          expect(resycrv).to.be.gte(0);
+          expect(resdai).to.be.gte(0);
 
           r = await pair.getReserves();
           q = await uniswapRouter.quote(oneEth, r[0], r[1]);
@@ -646,22 +646,22 @@ describe("Distribution", () => {
             constants.MaxUint256.sub(1),
             { gasLimit: 80000 }
           );
-          //console.log("approve ycrv")
-          await ycrv.approve(
+          //console.log("approve dai")
+          await dai.approve(
             uniswapRouter.address,
             constants.MaxUint256.sub(1),
             { gasLimit: 80000 }
           );
 
-          let ycrv_bal = await ycrv.balanceOf(user.address)
+          let dai_bal = await dai.balanceOf(user.address)
 
-          console.log("ycrv_bal bal", ycrv_bal)
+          console.log("dai_bal bal", dai_bal)
 
           ham_bal = BigNumber.from(ham_bal);
           console.log("add liq/ create pool")
           await uniswapRouter.addLiquidity(
             ham.address,
-            ycrv.address,
+            dai.address,
             ham_bal.div(10),
             ham_bal.div(10),
             ham_bal.div(10),
@@ -673,7 +673,7 @@ describe("Distribution", () => {
 
           let pairAddress = await uniswapFactory.getPair(
             ham.address,
-            ycrv.address
+            dai.address
           );
           let pair = UniswapPairFactory.connect(pairAddress, user);
 
@@ -686,7 +686,7 @@ describe("Distribution", () => {
             100000,
             [
               ham.address,
-              ycrv.address
+              dai.address
             ],
             user.address,
             uniswapDeadline,
@@ -700,7 +700,7 @@ describe("Distribution", () => {
             100000,
             [
               ham.address,
-              ycrv.address
+              dai.address
             ],
             user.address,
             uniswapDeadline,
@@ -720,7 +720,7 @@ describe("Distribution", () => {
             100000,
             [
               ham.address,
-              ycrv.address
+              dai.address
             ],
             user.address,
             uniswapDeadline,
@@ -740,7 +740,7 @@ describe("Distribution", () => {
             100000,
             [
               ham.address,
-              ycrv.address
+              dai.address
             ],
             user.address,
             uniswapDeadline,
@@ -781,10 +781,10 @@ describe("Distribution", () => {
 
           let resHAM = await ham.balanceOf(reserves.address);
 
-          let resycrv = await ycrv.balanceOf(reserves.address);
+          let resdai = await dai.balanceOf(reserves.address);
 
           expect(bal1).to.be.lte(bal);
-          expect(resycrv).to.be.eq(0);
+          expect(resdai).to.be.eq(0);
 
           r = await pair.getReserves();
           q = await uniswapRouter.quote(oneEth, r[0], r[1]);

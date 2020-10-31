@@ -10,7 +10,7 @@ Ham is a financial MMORPG building upon some of the least dumb ideas in programm
 
 Read the [manifesto](./MANIFESTO.md).
 
-At its core, HAM is an elastic supply cryptocurrency, which expands and contracts its supply in response to market conditions, initially targeting 4.20 USD per HAM. This stability mechanism includes one key addition to existing elastic supply models such as Ampleforth: a portion of each supply expansion is used to buy assets and add them to the Ham treasury, which is controlled via Ham community governance, as well as incentivizing certain user behavior.
+At its core, HAM is an elastic supply cryptocurrency, which expands and contracts its supply in response to market conditions, initially targeting 1.00 DAI per HAM. This stability mechanism includes one key addition to existing elastic supply models such as Ampleforth: a portion of each supply expansion is used to buy assets and add them to the Ham treasury, which is controlled via Ham community governance, as well as incentivizing certain user behavior.
 
 At launch there will be zero value in the HAM token. After deployment and initial distribution, it is entirely dependent upon HAM holders to determine its value and future development. We have employed a fork of the Compound governance module, which will ensure all updates to the Ham protocol happen entirely on-chain through community voting.
 

@@ -40,7 +40,7 @@ describe("rebase_tests", () => {
 
   let ham : Ham;
   let rebaser : HamRebaser;
-  let ycrv : StubToken;
+  let dai : StubToken;
   let reserves : HamReserves;
   let uniswapFactory : UniswapV2Factory;
   let uniswapRouter : UniswapV2Router02;
@@ -55,7 +55,7 @@ describe("rebase_tests", () => {
     let hamDeployment = await deployments.get("HAM");
     let rebaserDeployment = await deployments.get("HAMRebaser");
     let reservesDeployment = await deployments.get("HAMReserves");
-    let ycrvDeployment = await deployments.get("yCRV");
+    let daiDeployment = await deployments.get("DAI");
     let uniFactDeployment = await deployments.get("UniswapV2Factory");
     let uniRouterDeployment = await deployments.get("UniswapV2Router");
 
@@ -63,25 +63,25 @@ describe("rebase_tests", () => {
       ham: HamFactory.connect(hamDeployment.address, user),
       rebaser: HamRebaserFactory.connect(rebaserDeployment.address, user),
       reserves: HamReservesFactory.connect(reservesDeployment.address, user),
-      ycrv: StubTokenFactory.connect(ycrvDeployment.address, user),
+      dai: StubTokenFactory.connect(daiDeployment.address, user),
       uniswapFactory: UniswapV2FactoryFactory.connect(uniFactDeployment.address, user),
       uniswapRouter: UniswapV2Router02Factory.connect(uniRouterDeployment.address, user),
     };
   }
 
   beforeEach(async () => {
-    ({ ham, rebaser, reserves, ycrv, uniswapFactory, uniswapRouter } = await loadFixture(deploymentFixture));
+    ({ ham, rebaser, reserves, dai, uniswapFactory, uniswapRouter } = await loadFixture(deploymentFixture));
   });
 
   describe("rebase", () => {
-    it("user has ycrv", async () => {
-      let bal0 = await ycrv.balanceOf(user.address);
+    it("user has dai", async () => {
+      let bal0 = await dai.balanceOf(user.address);
       expect(bal0).to.be.eq(BigNumber.from("2000000000000000000000000"));
     });
 
     it("create pair", async () => {
       await uniswapFactory.createPair(
-        ycrv.address,
+        dai.address,
         ham.address,
         { gasLimit: 8000000 }
       );
@@ -93,14 +93,14 @@ describe("rebase_tests", () => {
         constants.MaxUint256.sub(1),
         { gasLimit: 80000 }
       );
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1),
         { gasLimit: 80000 }
       );
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from(10000000),
         BigNumber.from(10000000),
         BigNumber.from(10000000),
@@ -111,7 +111,7 @@ describe("rebase_tests", () => {
       );
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
       let bal = await pair.balanceOf(user.address);
@@ -123,14 +123,14 @@ describe("rebase_tests", () => {
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000}
       );
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000}
       );
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from(10000000),
         BigNumber.from(10000000),
         BigNumber.from(10000000),
@@ -141,7 +141,7 @@ describe("rebase_tests", () => {
       );
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
       let bal = await pair.balanceOf(user.address);
@@ -152,7 +152,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -177,7 +177,7 @@ describe("rebase_tests", () => {
         { gasLimit: 80000 }
       );
 
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1),
         { gasLimit: 80000 }
@@ -185,13 +185,13 @@ describe("rebase_tests", () => {
 
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from(100000),
         BigNumber.from(100000),
         BigNumber.from(100000),
@@ -207,7 +207,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -237,14 +237,14 @@ describe("rebase_tests", () => {
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
@@ -258,7 +258,7 @@ describe("rebase_tests", () => {
 
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
 
@@ -269,7 +269,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -285,7 +285,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -304,7 +304,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000000000000000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -325,7 +325,7 @@ describe("rebase_tests", () => {
         BigNumber.from("10000000000000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -378,9 +378,9 @@ describe("rebase_tests", () => {
 
       let resHAM = await ham.balanceOf(reserves.address);
 
-      let resycrv = await ycrv.balanceOf(reserves.address);
+      let resdai = await dai.balanceOf(reserves.address);
 
-      console.log("bal user, bal ham res, bal res crv", bal1, resHAM, resycrv);
+      console.log("bal user, bal ham res, bal res crv", bal1, resHAM, resdai);
       r = await pair.getReserves();
       q = await uniswapRouter.quote(oneEth.toString(), r[0], r[1]);
       console.log("post positive rebase quote", q);
@@ -390,7 +390,7 @@ describe("rebase_tests", () => {
       // used full ham reserves
       expect(resHAM).to.be.eq(0);
       // increases reserves
-      expect(resycrv).to.be.gte(0);
+      expect(resdai).to.be.gte(0);
 
       // not below peg
       expect(q).to.be.gte(oneEth);
@@ -401,14 +401,14 @@ describe("rebase_tests", () => {
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
@@ -419,7 +419,7 @@ describe("rebase_tests", () => {
 
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
 
@@ -430,7 +430,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -443,7 +443,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -462,7 +462,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -480,7 +480,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -524,27 +524,27 @@ describe("rebase_tests", () => {
 
       let resHAM = await ham.balanceOf(reserves.address);
 
-      let resycrv = await ycrv.balanceOf(reserves.address);
+      let resdai = await dai.balanceOf(reserves.address);
 
       // balance decreases
       expect(bal1).to.be.lte(bal);
       // no increases to reserves
       expect(resHAM).to.be.eq(0);
-      expect(resycrv).to.be.eq(0);
+      expect(resdai).to.be.eq(0);
     });
     it("no rebasing", async () => {
       await ham.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
@@ -555,7 +555,7 @@ describe("rebase_tests", () => {
 
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
 
@@ -566,7 +566,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -579,7 +579,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -597,7 +597,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -607,7 +607,7 @@ describe("rebase_tests", () => {
         BigNumber.from("10000000000000000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -626,7 +626,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -636,7 +636,7 @@ describe("rebase_tests", () => {
         BigNumber.from("10000000000000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -680,13 +680,13 @@ describe("rebase_tests", () => {
 
       let resHAM = await ham.balanceOf(reserves.address);
 
-      let resycrv = await ycrv.balanceOf(reserves.address);
+      let resdai = await dai.balanceOf(reserves.address);
 
       // no change
       expect(bal1).to.be.eq(bal);
       // no increases to reserves
       expect(resHAM).to.be.eq(0);
-      expect(resycrv).to.be.eq(0);
+      expect(resdai).to.be.eq(0);
       r = await pair.getReserves();
       q = await uniswapRouter.quote(oneEth.toString(), r[0], r[1]);
       console.log("quote post no rebase", q);
@@ -696,14 +696,14 @@ describe("rebase_tests", () => {
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
@@ -715,7 +715,7 @@ describe("rebase_tests", () => {
 
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
 
@@ -726,7 +726,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -739,7 +739,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -756,7 +756,7 @@ describe("rebase_tests", () => {
         BigNumber.from("500000000000000000000000"),
         BigNumber.from("100000"),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -773,7 +773,7 @@ describe("rebase_tests", () => {
         BigNumber.from("10000000000000000000"),
         BigNumber.from("100000"),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -816,12 +816,12 @@ describe("rebase_tests", () => {
 
       let resHAM = await ham.balanceOf(reserves.address);
 
-      let resycrv = await ycrv.balanceOf(reserves.address);
+      let resdai = await dai.balanceOf(reserves.address);
 
-      console.log(bal, bal1, resHAM, resycrv);
+      console.log(bal, bal1, resHAM, resdai);
       expect(bal).to.be.lte(bal1);
       expect(resHAM).to.be.gte(0);
-      expect(resycrv).to.be.gte(0);
+      expect(resdai).to.be.gte(0);
       r = await pair.getReserves();
       q = await uniswapRouter.quote(oneEth.toString(), r[0], r[1]);
       console.log("quote post rebase w/ reserves", q);
@@ -844,13 +844,13 @@ describe("rebase_tests", () => {
       await ham.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 });
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 });
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
@@ -861,7 +861,7 @@ describe("rebase_tests", () => {
 
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
 
@@ -872,7 +872,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -885,7 +885,7 @@ describe("rebase_tests", () => {
         BigNumber.from(100000),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline,
@@ -902,7 +902,7 @@ describe("rebase_tests", () => {
         BigNumber.from("500000000000000000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -920,7 +920,7 @@ describe("rebase_tests", () => {
         BigNumber.from("10000000000000000000"),
         BigNumber.from(100000),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -960,14 +960,14 @@ describe("rebase_tests", () => {
       await ham.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 });
-      await ycrv.approve(
+      await dai.approve(
         uniswapRouter.address,
         constants.MaxUint256.sub(1), { gasLimit: 80000 }
       );
 
       await uniswapRouter.addLiquidity(
         ham.address,
-        ycrv.address,
+        dai.address,
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
         BigNumber.from("1000000000000000000000000"),
@@ -977,7 +977,7 @@ describe("rebase_tests", () => {
 
       let pairAddress = await uniswapFactory.getPair(
         ham.address,
-        ycrv.address
+        dai.address
       );
       let pair = UniswapPairFactory.connect(pairAddress, user);
 
@@ -988,7 +988,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000000000"),
         BigNumber.from("100000"),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -1000,7 +1000,7 @@ describe("rebase_tests", () => {
         BigNumber.from("100000"),
         [
           ham.address,
-          ycrv.address
+          dai.address
         ],
         user.address,
         uniswapDeadline, { gasLimit: 1000000 });
@@ -1016,7 +1016,7 @@ describe("rebase_tests", () => {
         BigNumber.from("500000000000000000000000"),
         BigNumber.from("100000"),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
@@ -1033,7 +1033,7 @@ describe("rebase_tests", () => {
         BigNumber.from("10000000000000000000"),
         BigNumber.from("100000"),
         [
-          ycrv.address,
+          dai.address,
           ham.address
         ],
         user.address,
