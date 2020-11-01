@@ -38,7 +38,6 @@ contract HAMToken is HAMGovernanceToken {
         decimals = decimals_;
     }
 
-
     /**
     * @notice Computes the current max scaling factor
     */
@@ -330,7 +329,7 @@ contract HAMToken is HAMGovernanceToken {
         } else {
             uint256 newScalingFactor = hamsScalingFactor.mul(BASE.add(indexDelta)).div(BASE);
             if (newScalingFactor < _maxScalingFactor()) {
-                hamsScalingFactor = newScalingFactor;
+              hamsScalingFactor = newScalingFactor;
             } else {
               hamsScalingFactor = _maxScalingFactor();
             }

@@ -88,6 +88,8 @@ npm run test
 
 Much of this code base is modified from existing works, including:
 
+[Tornado](https://tornado.cash) -🌪️🐷
+
 [YAM](https://yam.finance) - Basically s/YAM/HAM/g
 
 [Compound](https://compound.finance) - Jumping off point for YAM token code and governance
