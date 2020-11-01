@@ -12,7 +12,9 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts();
 
   const ham = await deployments.get("HAM");
+  const reserves = await deployments.get("HAMReserves");
   const farmRegistry = await deployments.get("FarmRegistry");
+  const uniswapRouter = await deployments.get("UniswapV2Router");
 
   const oneEth = BigNumber.from(10).pow(18);
 
@@ -26,9 +28,12 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
     }
   );
 
-  // TODO put up SAM on Uniswap
+  console.log("sam liquidity on uniswap");
+  await execute("SAM", { from: deployer }, "approve", uniswapRouter.address, oneEth.mul(600000));
+  await execute("UniswapV2Router", { from: deployer, value: oneEth, log: true }, "addLiquidityETH", sam.address, oneEth.mul(600000), 0, 0, reserves.address, 1609459201);
 
-  await execute("SAM", { from: deployer }, "transfer", "0xc95C558dAA63b1A79331B2AB4a2a7af375384d3B", oneEth.mul(400000));
+  console.log("sam on ham");
+  await execute("SAM", { from: deployer, log: true }, "transfer", "0xc95C558dAA63b1A79331B2AB4a2a7af375384d3B", oneEth.mul(400000));
 
   const transferOwnership = (contract : string, newAddress : string) => {
     return execute(contract,

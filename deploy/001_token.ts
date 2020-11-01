@@ -25,9 +25,10 @@ const func: DeployFunction = async function (bre: BuidlerRuntimeEnvironment) {
   const amountToMint = (bre.network.name === "buidlerevm" ?
     twoHundred.div(2).mul(7) : twoHundred);
 
-  await deploy(
+  let ham = await deploy(
     "HAM", { from: deployer,
       contract: "HAMDelegator",
+      log:true,
       args: [
         "HAM",
         "Ham ham ham",
